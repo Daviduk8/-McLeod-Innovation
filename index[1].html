@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>Fantastic Four Keyboard</title>
+  <style>
+    body {
+      background-color: #001F3F;
+      color: #FF4136;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 20px;
+    }
+    h1 {
+      margin: 20px;
+      font-size: 2rem;
+      color: #FF4136;
+    }
+    .quote {
+      font-style: italic;
+      color: #AAAAAA;
+      margin: 10px 0;
+    }
+    #textInput {
+      width: 90%;
+      min-height: 100px;
+      font-size: 1.2rem;
+      background: white;
+      color: black;
+      border: 2px solid #FF4136;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      padding: 10px;
+      outline: none;
+      overflow-wrap: break-word;
+    }
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(11, 1fr);
+      gap: 5px;
+      margin-bottom: 20px;
+    }
+    .key {
+      padding: 10px;
+      background: #FFDC00;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    .btn {
+      padding: 10px 20px;
+      background-color: #FF4136;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .active {
+      background-color: #2ECC40 !important;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>فانتاستك فور</h1>
+  <p class="quote">اكتب بعاطفة… تكلّم بقوة… لأن هناك كلمات لا تُقال بهدوء</p>
+
+  <div id="textInput" contenteditable="true"></div>
+
+  <div class="keyboard" id="keyboard"></div>
+
+  <div>
+    <button class="btn" onclick="copyText()">خذها للعالم</button>
+    <button class="btn" id="capsLockBtn" onclick="toggleCaps()">CAPS LOCK 🔠</button>
+  </div>
+
+  <p class="quote">تريد وأنا أريد والله يفعل ما يريد</p>
+
+  <script>
+    const textInput = document.getElementById('textInput');
+    const capsBtn = document.getElementById('capsLockBtn');
+    let capsActive = false;
+
+    const keys = ['ض','ص','ث','ق','ف','غ','ع','ه','خ','ح','ج','ش','س','ي','ب','ل','ا','ت','ن','م','ك','ط','ئ','ء','ؤ','ر','ﻻ','ى','ة','و','ز','ظ','،','؟','!','.', '⌫','⎵','⏎','⎘'];
+
+    function insertLetter(letter) {
+      const span = document.createElement('span');
+      span.textContent = letter;
+      span.style.fontSize = capsActive ? '175%' : '100%';
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
+      range.deleteContents();
+      range.insertNode(span);
+      range.setStartAfter(span);
+      range.setEndAfter(span);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      textInput.focus();
+    }
+
+    const keyboard = document.getElementById('keyboard');
+    keys.forEach(key => {
+      const btn = document.createElement('button');
+      btn.classList.add('key');
+      btn.textContent = key;
+      btn.onclick = () => {
+        if (key === '⌫') {
+          let last = textInput.lastChild;
+          if (last) textInput.removeChild(last);
+        } else if (key === '⎵') {
+          insertLetter(' ');
+        } else if (key === '⏎') {
+          const br = document.createElement('br');
+          textInput.appendChild(br);
+        } else if (key === '⎘') {
+          textInput.innerHTML = '';
+        } else {
+          insertLetter(key);
+        }
+      };
+      keyboard.appendChild(btn);
+    });
+
+    function toggleCaps() {
+      capsActive = !capsActive;
+      capsBtn.classList.toggle('active');
+    }
+
+    function copyText() {
+      const range = document.createRange();
+      range.selectNodeContents(textInput);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      document.execCommand("copy");
+      alert("✔ تم النسخ — خذها للعالم");
+    }
+  </script>
+</body>
+</html>
